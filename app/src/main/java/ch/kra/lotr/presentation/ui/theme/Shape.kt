@@ -1,4 +1,4 @@
-package ch.kra.lotr.ui.theme
+package ch.kra.lotr.presentation.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
