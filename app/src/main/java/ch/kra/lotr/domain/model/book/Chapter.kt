@@ -1,6 +1,6 @@
 package ch.kra.lotr.domain.model.book
 
-data class Book(
+data class Chapter(
     val id: String,
-    val title: String
+    val chapterName: String
 )
