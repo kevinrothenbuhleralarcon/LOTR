@@ -27,7 +27,8 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun BookListScreen(
     viewModel: BookViewModel = hiltViewModel(),
-    navigate: (String, String) -> Unit
+    navigate: (String, String) -> Unit,
+    navigateToMovies: () -> Unit,
 ) {
     val bookListState = viewModel.bookListState.value
     val scaffoldState = rememberScaffoldState()
@@ -70,8 +71,16 @@ fun BookListScreen(
             ) {
                 BookListWrapper(
                     bookListState = bookListState,
-                    navigate = navigate
+                    navigate = navigate,
+                    modifier = Modifier
+                        .weight(0.9f)
                 )
+                Button(
+                    modifier = Modifier.weight(0.1f),
+                    onClick = { navigateToMovies() }
+                ) {
+                    Text(text = "Movies")
+                }
             }
         }
 
@@ -94,10 +103,11 @@ private fun BookListHeader(modifier: Modifier = Modifier) {
 @Composable
 private fun BookListWrapper(
     bookListState: BookListState,
-    navigate: (String, String) -> Unit
+    navigate: (String, String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .clip(RoundedCornerShape(10.dp))
             .shadow(1.dp, RoundedCornerShape(10.dp))

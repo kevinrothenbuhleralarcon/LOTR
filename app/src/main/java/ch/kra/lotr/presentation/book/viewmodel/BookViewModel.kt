@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.kra.lotr.core.Resource
 import ch.kra.lotr.core.UIEvent
-import ch.kra.lotr.domain.use_case.GetBookList
+import ch.kra.lotr.domain.use_case.book.GetBookList
 import ch.kra.lotr.presentation.book.BookListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

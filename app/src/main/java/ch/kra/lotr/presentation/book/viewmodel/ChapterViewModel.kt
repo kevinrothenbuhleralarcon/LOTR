@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.kra.lotr.core.Resource
 import ch.kra.lotr.core.UIEvent
-import ch.kra.lotr.domain.use_case.GetChapterList
+import ch.kra.lotr.domain.use_case.book.GetChapterList
 import ch.kra.lotr.presentation.book.ChapterListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ChapterListViewModel @Inject constructor(
+class ChapterViewModel @Inject constructor(
     private val getChapterList: GetChapterList
 ) : ViewModel() {
 

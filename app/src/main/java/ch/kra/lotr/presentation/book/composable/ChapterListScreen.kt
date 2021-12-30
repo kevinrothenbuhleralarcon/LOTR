@@ -1,6 +1,5 @@
 package ch.kra.lotr.presentation.book.composable
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,7 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,14 +19,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.lotr.core.UIEvent
 import ch.kra.lotr.domain.model.book.Chapter
 import ch.kra.lotr.presentation.book.ChapterListState
-import ch.kra.lotr.presentation.book.viewmodel.ChapterListViewModel
+import ch.kra.lotr.presentation.book.viewmodel.ChapterViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ChapterListScreen(
     bookId: String,
     bookName: String,
-    viewModel: ChapterListViewModel = hiltViewModel(),
+    viewModel: ChapterViewModel = hiltViewModel(),
     navigateBack: () -> Unit
 ) {
     val chapterListState = viewModel.chapterListState.value

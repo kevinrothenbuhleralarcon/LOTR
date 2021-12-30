@@ -1,4 +1,4 @@
-package ch.kra.lotr.domain.use_case
+package ch.kra.lotr.domain.use_case.book
 
 import ch.kra.lotr.core.Resource
 import ch.kra.lotr.domain.model.book.Chapter

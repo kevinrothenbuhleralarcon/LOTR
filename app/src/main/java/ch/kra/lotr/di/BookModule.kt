@@ -3,8 +3,8 @@ package ch.kra.lotr.di
 import ch.kra.lotr.data.remote.dto.LotrApi
 import ch.kra.lotr.data.repository.book.BookRepositoryImpl
 import ch.kra.lotr.domain.repository.book.BookRepository
-import ch.kra.lotr.domain.use_case.GetBookList
-import ch.kra.lotr.domain.use_case.GetChapterList
+import ch.kra.lotr.domain.use_case.book.GetBookList
+import ch.kra.lotr.domain.use_case.book.GetChapterList
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
