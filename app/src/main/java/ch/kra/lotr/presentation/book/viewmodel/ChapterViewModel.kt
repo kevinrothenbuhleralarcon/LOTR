@@ -2,6 +2,7 @@ package ch.kra.lotr.presentation.book.viewmodel
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.kra.lotr.core.Resource
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChapterViewModel @Inject constructor(
-    private val getChapterList: GetChapterList
+    private val getChapterList: GetChapterList,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private var hasApiCallAlreadySucceed = false
@@ -25,6 +27,11 @@ class ChapterViewModel @Inject constructor(
 
     private val _eventFlow = MutableSharedFlow<UIEvent>()
     val eventFlow: SharedFlow<UIEvent> = _eventFlow.asSharedFlow()
+
+    init {
+        println("Book id state: ${savedStateHandle.get<String>("bookId")}")
+        println("Book name state: ${savedStateHandle.get<String>("bookName")}")
+    }
 
 
     fun getBookChapter(bookId: String) {

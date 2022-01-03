@@ -19,27 +19,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.lotr.R
+import ch.kra.lotr.core.ListState
 import ch.kra.lotr.core.UIEvent
-import ch.kra.lotr.presentation.book.BookListState
+import ch.kra.lotr.domain.model.book.Book
+import ch.kra.lotr.presentation.book.BookListEvent
 import ch.kra.lotr.presentation.book.viewmodel.BookViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun BookListScreen(
     viewModel: BookViewModel = hiltViewModel(),
-    navigate: (String, String) -> Unit,
-    navigateToMovies: () -> Unit,
+    navigate: (UIEvent.Navigate) -> Unit
 ) {
     val bookListState = viewModel.bookListState.value
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
+        viewModel.uiEvent.collectLatest { event ->
             when (event) {
                 is UIEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message
                     )
+                }
+
+                is UIEvent.Navigate -> {
+                    navigate(event)
                 }
             }
         }
@@ -71,16 +76,10 @@ fun BookListScreen(
             ) {
                 BookListWrapper(
                     bookListState = bookListState,
-                    navigate = navigate,
                     modifier = Modifier
-                        .weight(0.9f)
+                        .weight(0.8f),
+                    onEvent = viewModel::onEvent
                 )
-                Button(
-                    modifier = Modifier.weight(0.1f),
-                    onClick = { navigateToMovies() }
-                ) {
-                    Text(text = "Movies")
-                }
             }
         }
 
@@ -102,9 +101,9 @@ private fun BookListHeader(modifier: Modifier = Modifier) {
 
 @Composable
 private fun BookListWrapper(
-    bookListState: BookListState,
-    navigate: (String, String) -> Unit,
-    modifier: Modifier = Modifier
+    bookListState: ListState<Book>,
+    modifier: Modifier = Modifier,
+    onEvent: (BookListEvent) -> Unit
 ) {
     Box(
         modifier = modifier
@@ -127,7 +126,7 @@ private fun BookListWrapper(
         } else {
             BookList(
                 bookListState = bookListState,
-                navigate = navigate
+                onEvent = onEvent
             )
         }
     }
@@ -135,8 +134,8 @@ private fun BookListWrapper(
 
 @Composable
 private fun BookList(
-    bookListState: BookListState,
-    navigate: (String, String) -> Unit
+    bookListState: ListState<Book>,
+    onEvent: (BookListEvent) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
@@ -158,21 +157,18 @@ private fun BookList(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            items(bookListState.bookList.size) { i ->
+            items(bookListState.list.size) { i ->
                 if (i > 0) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
                 Text(
-                    text = bookListState.bookList[i].title,
+                    text = bookListState.list[i].title,
                     color = MaterialTheme.colors.onSecondary,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            navigate(
-                                bookListState.bookList[i].id,
-                                bookListState.bookList[i].title
-                            )
+                            onEvent(BookListEvent.DisplayChapter(bookListState.list[i]))
                         }
                 )
             }
