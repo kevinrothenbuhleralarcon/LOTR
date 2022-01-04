@@ -63,13 +63,44 @@ fun Navigation(navController: NavHostController) {
                 navController.popBackStack()
             }
         }
-        composable(route = Routes.MOVIE_LIST) {
-            val viewModel: MovieViewModel = hiltViewModel()
-            MovieListScreen(viewModel = viewModel, navigate = {navController.navigate("book_list_screen")})
-        }
+        movieGraph(navController = navController)
 
         composable(route = Routes.CHARACTER_LIST) {
 
+        }
+    }
+}
+
+
+private fun NavGraphBuilder.movieGraph(navController: NavHostController) {
+    navigation(startDestination = Routes.MOVIE_LIST, route = "movie") {
+
+        composable(route = Routes.MOVIE_LIST) {
+            val parentEntry = remember {
+                navController.getBackStackEntry("movie")
+            }
+
+            val viewModel: MovieViewModel = hiltViewModel(parentEntry)
+            MovieListScreen(
+                viewModel = viewModel,
+                navigate = { event ->
+                    navController.navigate(event.route)
+                }
+            )
+        }
+
+        composable(route = Routes.MOVIE_DETAIL) {
+            val parentEntry = remember {
+                navController.getBackStackEntry("movie")
+            }
+
+            val viewModel: MovieViewModel = hiltViewModel(parentEntry)
+            MovieListScreen(
+                viewModel = viewModel,
+                navigate = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

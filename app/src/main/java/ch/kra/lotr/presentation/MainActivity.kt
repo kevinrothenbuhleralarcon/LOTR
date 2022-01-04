@@ -49,7 +49,11 @@ class MainActivity : ComponentActivity() {
                             backStackEntryState = navController.currentBackStackEntryAsState(),
                             navigate = { route ->
                                 navController.navigate(route) {
-                                    popUpTo(Routes.BOOK_LIST)
+                                    popUpTo(Routes.BOOK_LIST) {
+                                        if (route == Routes.BOOK_LIST) {
+                                            inclusive = true
+                                        }
+                                    }
                                 }
                             },
                             modifier = Modifier

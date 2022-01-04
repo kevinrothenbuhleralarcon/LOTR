@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.kra.lotr.core.ListState
 import ch.kra.lotr.core.Resource
+import ch.kra.lotr.core.Routes
 import ch.kra.lotr.core.UIEvent
 import ch.kra.lotr.domain.model.movie.Movie
 import ch.kra.lotr.domain.use_case.movie.GetMovieList
+import ch.kra.lotr.presentation.movie.MovieListEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,11 +25,29 @@ class MovieViewModel @Inject constructor(
     private val _movieListState = mutableStateOf(ListState<Movie>())
     val movieListState: State<ListState<Movie>> get() = _movieListState
 
-    private val _eventFlow = MutableSharedFlow<UIEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
+    private val _movie = mutableStateOf<Movie?>(null)
+    val movie: State<Movie?> get() = _movie
+
+    private val _uiEvent = Channel<UIEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     init {
         getMovies()
+    }
+
+    fun onEvent(event: MovieListEvent) {
+        when (event) {
+            is MovieListEvent.DisplayMovieDetail -> {
+                _movie.value = event.movie
+                sendEvent(UIEvent.Navigate(Routes.MOVIE_DETAIL))
+            }
+        }
+    }
+
+    private fun sendEvent(event: UIEvent) {
+        viewModelScope.launch {
+            _uiEvent.send(event)
+        }
     }
 
     private fun getMovies() {
@@ -45,7 +66,7 @@ class MovieViewModel @Inject constructor(
                             list = result.data ?: listOf(),
                             isLoading = false
                         )
-                        _eventFlow.emit(
+                        sendEvent(
                             UIEvent.ShowSnackbar(
                                 message = result.message ?: "Unknown Error"
                             )
