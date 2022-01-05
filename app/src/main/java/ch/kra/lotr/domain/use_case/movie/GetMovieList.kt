@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class GetMovieList(
     private val repository: MovieRepository
 ) {
-    suspend operator fun invoke(): Flow<Resource<List<Movie>>> {
+    operator fun invoke(): Flow<Resource<List<Movie>>> {
         return repository.getMovieList()
     }
 }

@@ -13,46 +13,47 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ch.kra.lotr.R
+import ch.kra.lotr.core.ListState
 import ch.kra.lotr.core.UIEvent
 import ch.kra.lotr.domain.model.book.Chapter
-import ch.kra.lotr.presentation.book.ChapterListState
+import ch.kra.lotr.presentation.book.ChapterListEvent
 import ch.kra.lotr.presentation.book.viewmodel.ChapterViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ChapterListScreen(
-    bookId: String,
-    bookName: String,
     viewModel: ChapterViewModel = hiltViewModel(),
     navigateBack: () -> Unit
 ) {
     val chapterListState = viewModel.chapterListState.value
+    val bookName = viewModel.bookName
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
+        viewModel.uiEvent.collectLatest { event ->
             when (event) {
                 is UIEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.message
                     )
                 }
+
+                is UIEvent.PopBackStack -> {
+                    navigateBack()
+                }
             }
         }
-    }
-
-    LaunchedEffect(key1 = true) {
-        viewModel.getBookChapter(bookId)
     }
 
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.primary)
     ) {
         Column(
             modifier = Modifier
@@ -62,7 +63,7 @@ fun ChapterListScreen(
             ChapterListHeader(
                 bookName = bookName,
                 modifier = Modifier.fillMaxWidth(),
-                navigateBack = navigateBack
+                onEvent = viewModel::onEvent
             )
             
             Spacer(modifier = Modifier.height(16.dp))
@@ -73,7 +74,6 @@ fun ChapterListScreen(
                     .padding(16.dp)
             ) {
                 ChapterListWrapper(
-                    bookName = bookName,
                     chapterListState = chapterListState
                 )
             }
@@ -85,7 +85,7 @@ fun ChapterListScreen(
 private fun ChapterListHeader(
     bookName: String,
     modifier: Modifier = Modifier,
-    navigateBack: () -> Unit
+    onEvent: (ChapterListEvent) -> Unit
 ) {
     Row(
         modifier = modifier,
@@ -97,7 +97,7 @@ private fun ChapterListHeader(
             modifier = Modifier
                 .size(30.dp)
                 .offset(16.dp, 16.dp)
-                .clickable { navigateBack() }
+                .clickable { onEvent(ChapterListEvent.OnNavigateBackPressed) }
         )
         
         Spacer(modifier = Modifier.width(32.dp))
@@ -114,8 +114,7 @@ private fun ChapterListHeader(
 
 @Composable
 private fun ChapterListWrapper(
-    bookName: String,
-    chapterListState: ChapterListState
+    chapterListState: ListState<Chapter>
 ) {
     Box(
         modifier = Modifier
@@ -137,8 +136,7 @@ private fun ChapterListWrapper(
             )
         } else {
             ChapterList(
-                bookName = bookName,
-                chapterList = chapterListState.chapterList
+                chapterList = chapterListState.list
             )
         }
     }
@@ -146,14 +144,13 @@ private fun ChapterListWrapper(
 
 @Composable
 fun ChapterList(
-    bookName: String,
     chapterList: List<Chapter>
 ) {
     Column(modifier = Modifier
         .fillMaxSize()
     ) {
         Text(
-            text = "Chapters",
+            text = stringResource(R.string.chapters),
             fontSize = 20.sp
         )
         Divider(

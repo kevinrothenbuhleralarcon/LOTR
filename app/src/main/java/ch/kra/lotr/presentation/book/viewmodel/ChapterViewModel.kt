@@ -1,15 +1,20 @@
 package ch.kra.lotr.presentation.book.viewmodel
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.kra.lotr.core.ListState
 import ch.kra.lotr.core.Resource
 import ch.kra.lotr.core.UIEvent
+import ch.kra.lotr.domain.model.book.Chapter
 import ch.kra.lotr.domain.use_case.book.GetChapterList
-import ch.kra.lotr.presentation.book.ChapterListState
+import ch.kra.lotr.presentation.book.ChapterListEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,19 +27,37 @@ class ChapterViewModel @Inject constructor(
 
     private var hasApiCallAlreadySucceed = false
 
-    private val _chapterListState = mutableStateOf(ChapterListState())
-    val chapterListState: State<ChapterListState> get() = _chapterListState
+    private val _chapterListState = mutableStateOf(ListState<Chapter>())
+    val chapterListState: State<ListState<Chapter>> get() = _chapterListState
 
-    private val _eventFlow = MutableSharedFlow<UIEvent>()
-    val eventFlow: SharedFlow<UIEvent> = _eventFlow.asSharedFlow()
+    private val _uiEvent = Channel<UIEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
+    var bookName by mutableStateOf("")
+        private set
 
     init {
-        println("Book id state: ${savedStateHandle.get<String>("bookId")}")
-        println("Book name state: ${savedStateHandle.get<String>("bookName")}")
+        bookName = savedStateHandle.get<String>("bookName") ?: ""
+        savedStateHandle.get<String>("bookId")?.let { bookId ->
+            getBookChapter(bookId)
+        }
     }
 
+    fun onEvent(event: ChapterListEvent) {
+        when (event) {
+            is ChapterListEvent.OnNavigateBackPressed -> {
+                sendUIEvent(UIEvent.PopBackStack)
+            }
+        }
+    }
 
-    fun getBookChapter(bookId: String) {
+    private fun sendUIEvent(event: UIEvent) {
+        viewModelScope.launch {
+            _uiEvent.send(event)
+        }
+    }
+
+    private fun getBookChapter(bookId: String) {
         if (!hasApiCallAlreadySucceed) {
             viewModelScope.launch {
                 getChapterList(bookId)
@@ -42,7 +65,7 @@ class ChapterViewModel @Inject constructor(
                         when (result) {
                             is Resource.Success -> {
                                 _chapterListState.value = _chapterListState.value.copy(
-                                    chapterList = result.data ?: emptyList(),
+                                    list = result.data ?: emptyList(),
                                     isLoading = false
                                 )
                                 hasApiCallAlreadySucceed = true
@@ -50,10 +73,12 @@ class ChapterViewModel @Inject constructor(
 
                             is Resource.Error -> {
                                 _chapterListState.value = _chapterListState.value.copy(
-                                    chapterList = result.data ?: emptyList(),
+                                    list = result.data ?: emptyList(),
                                     isLoading = false
                                 )
-                                _eventFlow.emit(UIEvent.ShowSnackbar(
+
+                                sendUIEvent(
+                                    UIEvent.ShowSnackbar(
                                     message = result.message ?: "Unknown error"
                                 ))
                                 hasApiCallAlreadySucceed = false
@@ -61,7 +86,7 @@ class ChapterViewModel @Inject constructor(
 
                             is Resource.Loading -> {
                                 _chapterListState.value = _chapterListState.value.copy(
-                                    chapterList = result.data ?: emptyList(),
+                                    list = result.data ?: emptyList(),
                                     isLoading = true
                                 )
                                 hasApiCallAlreadySucceed = false

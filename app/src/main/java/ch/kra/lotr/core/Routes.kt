@@ -6,4 +6,5 @@ object Routes {
     const val MOVIE_LIST = "movie_list_screen"
     const val MOVIE_DETAIL = "movie_detail_screen"
     const val CHARACTER_LIST = "character_list_screen"
+    const val CHARACTER_DETAIL = "character_detail_screen"
 }

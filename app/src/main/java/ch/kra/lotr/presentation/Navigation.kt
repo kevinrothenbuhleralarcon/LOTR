@@ -22,6 +22,10 @@ import ch.kra.lotr.R
 import ch.kra.lotr.core.Routes
 import ch.kra.lotr.presentation.book.composable.BookListScreen
 import ch.kra.lotr.presentation.book.composable.ChapterListScreen
+import ch.kra.lotr.presentation.character.composable.CharacterDetailScreen
+import ch.kra.lotr.presentation.character.composable.CharacterListScreen
+import ch.kra.lotr.presentation.character.viewModel.CharacterViewModel
+import ch.kra.lotr.presentation.movie.composable.MovieDetailScreen
 import ch.kra.lotr.presentation.movie.composable.MovieListScreen
 import ch.kra.lotr.presentation.movie.viewmodel.MovieViewModel
 import kotlin.time.TimeSource
@@ -59,15 +63,13 @@ fun Navigation(navController: NavHostController) {
                 it.arguments?.getString("bookName")
             }
 
-            ChapterListScreen(bookId = bookId ?: "", bookName = bookName ?: "") {
+            ChapterListScreen() {
                 navController.popBackStack()
             }
         }
         movieGraph(navController = navController)
 
-        composable(route = Routes.CHARACTER_LIST) {
-
-        }
+        characterGraph(navController = navController)
     }
 }
 
@@ -95,12 +97,40 @@ private fun NavGraphBuilder.movieGraph(navController: NavHostController) {
             }
 
             val viewModel: MovieViewModel = hiltViewModel(parentEntry)
-            MovieListScreen(
+            MovieDetailScreen(
+                viewModel = viewModel
+            ) {
+                navController.popBackStack()
+            }
+        }
+    }
+}
+
+private fun NavGraphBuilder.characterGraph(navController: NavHostController) {
+    navigation(startDestination = Routes.CHARACTER_LIST, route = "character") {
+
+        composable(route = Routes.CHARACTER_LIST) {
+            val parentEntry = remember {
+                navController.getBackStackEntry("character")
+            }
+
+            val viewModel: CharacterViewModel = hiltViewModel(parentEntry)
+            CharacterListScreen(
                 viewModel = viewModel,
-                navigate = {
-                    navController.popBackStack()
+                navigate = { event ->
+                    navController.navigate(event.route)
                 }
             )
+        }
+
+        composable(route = Routes.CHARACTER_DETAIL) {
+            val parentEntry = remember {
+                navController.getBackStackEntry("character")
+            }
+            val viewModel: CharacterViewModel = hiltViewModel(parentEntry)
+            CharacterDetailScreen(viewModel = viewModel) {
+                navController.popBackStack()
+            }
         }
     }
 }

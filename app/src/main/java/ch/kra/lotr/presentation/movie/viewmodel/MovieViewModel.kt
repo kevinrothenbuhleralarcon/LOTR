@@ -1,7 +1,9 @@
 package ch.kra.lotr.presentation.movie.viewmodel
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.kra.lotr.core.ListState
@@ -10,6 +12,7 @@ import ch.kra.lotr.core.Routes
 import ch.kra.lotr.core.UIEvent
 import ch.kra.lotr.domain.model.movie.Movie
 import ch.kra.lotr.domain.use_case.movie.GetMovieList
+import ch.kra.lotr.presentation.movie.MovieDetailEvent
 import ch.kra.lotr.presentation.movie.MovieListEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -25,8 +28,8 @@ class MovieViewModel @Inject constructor(
     private val _movieListState = mutableStateOf(ListState<Movie>())
     val movieListState: State<ListState<Movie>> get() = _movieListState
 
-    private val _movie = mutableStateOf<Movie?>(null)
-    val movie: State<Movie?> get() = _movie
+    var movie by mutableStateOf<Movie?>(null)
+        private set
 
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -35,10 +38,18 @@ class MovieViewModel @Inject constructor(
         getMovies()
     }
 
+    fun onEvent(event: MovieDetailEvent) {
+        when (event) {
+            is MovieDetailEvent.OnNavigateBack -> {
+                sendEvent(UIEvent.PopBackStack)
+            }
+        }
+    }
+
     fun onEvent(event: MovieListEvent) {
         when (event) {
             is MovieListEvent.DisplayMovieDetail -> {
-                _movie.value = event.movie
+                movie = event.movie
                 sendEvent(UIEvent.Navigate(Routes.MOVIE_DETAIL))
             }
         }

@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">LOTR</string>
+    <string name="chapters">Chapters</string>
+    <string name="runtime">Runtime: "</string>
+    <string name="budget">Budget: "</string>
+    <string name="millions">millions</string>
+    <string name="revenue">Revenue: "</string>
+    <string name="award_nomination">Award Nomination: "</string>
+    <string name="award_won">Award won: "</string>
+    <string name="born">"Born: "</string>
+    <string name="death">"Death: "</string>
+    <string name="height">"Height: "</string>
+    <string name="cm">cm</string>
+    <string name="spouse">"Spouse: "</string>
+    <string name="realm">"Realm: "</string>
+    <string name="hair">"Hair: "</string>
+    <string name="wiki">Wiki</string>
 </resources>

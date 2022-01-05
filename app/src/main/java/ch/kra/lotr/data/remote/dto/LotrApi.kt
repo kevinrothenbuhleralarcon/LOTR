@@ -3,6 +3,7 @@ package ch.kra.lotr.data.remote.dto
 import ch.kra.lotr.BuildConfig
 import ch.kra.lotr.data.remote.dto.book.BookListDto
 import ch.kra.lotr.data.remote.dto.book.ChapterListDto
+import ch.kra.lotr.data.remote.dto.character.CharacterListDto
 import ch.kra.lotr.data.remote.dto.movie.MovieListDto
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -22,4 +23,9 @@ interface LotrApi {
     suspend fun getMovieList(
         @Header("Authorization") authorization: String = "Bearer ${BuildConfig.TOKEN}"
     ): MovieListDto
+
+    @GET("character")
+    suspend fun getCharacterList(
+        @Header("Authorization") authorization: String = "Bearer ${BuildConfig.TOKEN}"
+    ): CharacterListDto
 }
