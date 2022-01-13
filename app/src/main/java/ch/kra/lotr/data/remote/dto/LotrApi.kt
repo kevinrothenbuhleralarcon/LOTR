@@ -24,7 +24,7 @@ interface LotrApi {
         @Header("Authorization") authorization: String = "Bearer ${BuildConfig.TOKEN}"
     ): MovieListDto
 
-    @GET("character")
+    @GET("character?sort=name:asc")
     suspend fun getCharacterList(
         @Header("Authorization") authorization: String = "Bearer ${BuildConfig.TOKEN}"
     ): CharacterListDto

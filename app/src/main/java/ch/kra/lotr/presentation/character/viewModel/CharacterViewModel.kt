@@ -16,6 +16,7 @@ import ch.kra.lotr.domain.use_case.character.GetCharacterList
 import ch.kra.lotr.presentation.character.CharacterDetailEvent
 import ch.kra.lotr.presentation.character.CharacterListEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -36,6 +37,13 @@ class CharacterViewModel @Inject constructor(
 
     private val _uiEvent = Channel<UIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
+
+    var searchValue by mutableStateOf("")
+        private set
+
+    private var cachedCharacterList = ListState<LotrCharacter>()
+    private var isSearchStarting = true
+    private var searchJob: Job? = null
 
     init {
         getCharacters()
@@ -63,6 +71,33 @@ class CharacterViewModel @Inject constructor(
                 character = event.character
                 sendEvent(UIEvent.Navigate(Routes.CHARACTER_DETAIL))
             }
+
+            is CharacterListEvent.OnSearch -> {
+                searchValue = event.searchValue
+                onSearch()
+            }
+        }
+    }
+
+    private fun onSearch() {
+        if (isSearchStarting) {
+            cachedCharacterList = _characterList.value
+            isSearchStarting = false
+        }
+        val listToSearch = cachedCharacterList.list
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            if (searchValue.isEmpty()) {
+                _characterList.value = cachedCharacterList
+                isSearchStarting = true
+                return@launch
+            }
+            val result = listToSearch.filter {
+                it.name.contains(searchValue.trim(), ignoreCase = true)
+            }
+            _characterList.value = _characterList.value.copy(
+                list = result
+            )
         }
     }
 

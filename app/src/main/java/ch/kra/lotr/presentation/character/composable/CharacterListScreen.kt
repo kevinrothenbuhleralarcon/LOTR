@@ -1,20 +1,22 @@
 package ch.kra.lotr.presentation.character.composable
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.kra.lotr.R
@@ -33,6 +35,9 @@ fun CharacterListScreen(
 ) {
     val characterListState = viewModel.characterList.value
     val scaffoldState = rememberScaffoldState()
+    var isHintDisplayed by remember {
+        mutableStateOf(true)
+    }
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -68,6 +73,43 @@ fun CharacterListScreen(
                         end = 16.dp
                     )
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp
+                    )
+            )
+            {
+                BasicTextField(
+                    value = viewModel.searchValue,
+                    onValueChange = {
+                        viewModel.onEvent(CharacterListEvent.OnSearch(it))
+                    },
+                    maxLines = 1,
+                    singleLine = true,
+                    textStyle = TextStyle(color = Color.Black),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color.White, CircleShape)
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                        .onFocusChanged {
+                            isHintDisplayed = !it.isFocused && viewModel.searchValue.isEmpty()
+                        }
+                )
+                if (isHintDisplayed) {
+                    Text(
+                        text = stringResource(R.string.search),
+                        color = Color.LightGray,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+                    )
+                }
+
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 

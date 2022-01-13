@@ -80,7 +80,7 @@ fun CharacterDetailScreen(
 }
 
 @Composable
-private fun CharacterDetail (
+private fun CharacterDetail(
     character: LotrCharacter,
     onEvent: (CharacterDetailEvent) -> Unit
 ) {
@@ -89,16 +89,28 @@ private fun CharacterDetail (
     } else {
         ImageVector.vectorResource(id = R.drawable.ic_male)
     }
-    
+
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth()) {
+
+            val raceStringBuilder = StringBuilder()
+            character.race?.let { race ->
+                raceStringBuilder.append(
+                    if (race.isNotEmpty()) {
+                        race
+                    } else {
+                        stringResource(R.string.unknown)
+                    }
+                )
+            } ?: raceStringBuilder.append(stringResource(R.string.unknown))
+
             Text(
-                text = character.race ?: stringResource(R.string.unknown),
+                text = raceStringBuilder.toString(),
                 color = MaterialTheme.colors.onSecondary
             )
-            
+
             Spacer(modifier = Modifier.width(8.dp))
-            
+
             Icon(
                 imageVector = icon,
                 contentDescription = character.gender,
@@ -108,17 +120,39 @@ private fun CharacterDetail (
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val birthStringBuilder = StringBuilder()
+        birthStringBuilder.append(stringResource(R.string.born))
+        character.birth?.let { birth ->
+            birthStringBuilder.append(
+                if (birth.isNotEmpty()) {
+                    birth
+                } else {
+                    stringResource(R.string.unknown)
+                }
+            )
+        } ?: birthStringBuilder.append(stringResource(R.string.unknown))
+
         Text(
-            text = stringResource(R.string.born) +
-                    (character.birth ?: stringResource(R.string.unknown)),
+            text = birthStringBuilder.toString(),
             color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val deathStringBuilder = StringBuilder()
+        deathStringBuilder.append(stringResource(R.string.death))
+        character.death?.let { death ->
+            deathStringBuilder.append(
+                if (death.isNotEmpty()) {
+                    death
+                } else {
+                    stringResource(R.string.unknown)
+                }
+            )
+        } ?: deathStringBuilder.append(stringResource(R.string.unknown))
+
         Text(
-            text = stringResource(R.string.death) +
-                    (character.death ?: stringResource(R.string.unknown)),
+            text = deathStringBuilder.toString(),
             color = MaterialTheme.colors.onSecondary
         )
 
@@ -127,9 +161,13 @@ private fun CharacterDetail (
         val heightStringBuilder = StringBuilder()
         heightStringBuilder.append(stringResource(R.string.height))
         character.height?.let { height ->
-            heightStringBuilder.append(height)
-            heightStringBuilder.append(" ")
-            heightStringBuilder.append(stringResource(R.string.cm))
+            if (height.isNotEmpty()) {
+                heightStringBuilder.append(height)
+                heightStringBuilder.append(" ")
+                heightStringBuilder.append(stringResource(R.string.cm))
+            } else {
+                heightStringBuilder.append(stringResource(id = R.string.unknown))
+            }
         } ?: heightStringBuilder.append(stringResource(id = R.string.unknown))
 
         Text(
@@ -139,26 +177,57 @@ private fun CharacterDetail (
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val hairStringBuilder = StringBuilder()
+        hairStringBuilder.append(stringResource(R.string.hair))
+        character.hair?.let { hair ->
+            hairStringBuilder.append(
+                if (hair.isNotEmpty()) {
+                    hair
+                } else {
+                    stringResource(R.string.unknown)
+                }
+            )
+        } ?: hairStringBuilder.append(stringResource(R.string.unknown))
+
         Text(
-            text = stringResource(R.string.hair) +
-                    (character.hair ?: stringResource(id = R.string.unknown)),
+            text = hairStringBuilder.toString(),
             color = MaterialTheme.colors.onSecondary
         )
 
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val spouseStringBuilder = StringBuilder()
+        spouseStringBuilder.append(stringResource(R.string.spouse))
+        character.spouse?.let { spouse ->
+            spouseStringBuilder.append(
+                if (spouse.isNotEmpty()) {
+                    spouse
+                } else {
+                    stringResource(R.string.unknown)
+                }
+            )
+        } ?: spouseStringBuilder.append(stringResource(R.string.unknown))
         Text(
-            text = stringResource(R.string.spouse) +
-                    (character.spouse ?: stringResource(id = R.string.unknown)),
+            text = spouseStringBuilder.toString(),
             color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val realmStringBuilder = StringBuilder()
+        realmStringBuilder.append(stringResource(R.string.realm))
+        character.realm?.let { realm ->
+            realmStringBuilder.append(
+                if (realm.isNotEmpty()) {
+                    realm
+                } else {
+                    stringResource(R.string.unknown)
+                }
+            )
+        } ?: realmStringBuilder.append(stringResource(R.string.unknown))
         Text(
-            text = stringResource(R.string.realm) +
-                    (character.realm ?: stringResource(id = R.string.unknown)),
+            text = realmStringBuilder.toString(),
             color = MaterialTheme.colors.onSecondary
         )
 
