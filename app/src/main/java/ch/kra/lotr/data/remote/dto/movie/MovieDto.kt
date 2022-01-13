@@ -1,6 +1,6 @@
 package ch.kra.lotr.data.remote.dto.movie
 
-import ch.kra.lotr.domain.model.movie.Movie
+import ch.kra.lotr.data.local.entity.movie.MovieEntity
 
 data class MovieDto(
     val _id: String,
@@ -12,8 +12,8 @@ data class MovieDto(
     val rottenTomatoesScore: Double,
     val runtimeInMinutes: Double
 ) {
-    fun toMovie(): Movie {
-        return Movie(
+    fun toMovieEntity(): MovieEntity {
+        return MovieEntity(
             id = _id,
             academyAwardNominations = academyAwardNominations,
             academyAwardWins = academyAwardWins,

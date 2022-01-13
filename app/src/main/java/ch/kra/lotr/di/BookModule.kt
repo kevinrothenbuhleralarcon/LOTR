@@ -1,5 +1,6 @@
 package ch.kra.lotr.di
 
+import ch.kra.lotr.data.local.LotrDatabase
 import ch.kra.lotr.data.remote.dto.LotrApi
 import ch.kra.lotr.data.repository.book.BookRepositoryImpl
 import ch.kra.lotr.domain.repository.book.BookRepository
@@ -33,8 +34,9 @@ object BookModule {
 
     @Provides
     @Singleton
-    fun provideBookRepository(api: LotrApi): BookRepository {
+    fun provideBookRepository(db: LotrDatabase, api: LotrApi): BookRepository {
         return BookRepositoryImpl(
+            db.lotrDao,
             api
         )
     }

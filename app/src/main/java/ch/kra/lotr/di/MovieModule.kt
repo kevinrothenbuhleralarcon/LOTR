@@ -1,5 +1,6 @@
 package ch.kra.lotr.di
 
+import ch.kra.lotr.data.local.LotrDatabase
 import ch.kra.lotr.data.remote.dto.LotrApi
 import ch.kra.lotr.data.repository.movie.MovieRepositoryImpl
 import ch.kra.lotr.domain.repository.movie.MovieRepository
@@ -24,8 +25,9 @@ object MovieModule {
 
     @Provides
     @Singleton
-    fun provideMovieRepository(api: LotrApi): MovieRepository {
+    fun provideMovieRepository(db: LotrDatabase, api: LotrApi): MovieRepository {
         return MovieRepositoryImpl(
+            db.lotrDao,
             api
         )
     }

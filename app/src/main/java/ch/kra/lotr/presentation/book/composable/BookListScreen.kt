@@ -20,6 +20,7 @@ import ch.kra.lotr.presentation.LoadingWrapper
 import ch.kra.lotr.presentation.LogoHeader
 import ch.kra.lotr.presentation.book.BookListEvent
 import ch.kra.lotr.presentation.book.viewmodel.BookViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -31,7 +32,7 @@ fun BookListScreen(
     val scaffoldState = rememberScaffoldState()
 
     LaunchedEffect(key1 = true) {
-        viewModel.uiEvent.collectLatest { event ->
+        viewModel.uiEvent.collect { event ->
             when (event) {
                 is UIEvent.ShowSnackbar -> {
                     scaffoldState.snackbarHostState.showSnackbar(

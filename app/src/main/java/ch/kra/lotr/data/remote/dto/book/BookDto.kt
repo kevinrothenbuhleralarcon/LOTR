@@ -1,13 +1,13 @@
 package ch.kra.lotr.data.remote.dto.book
 
-import ch.kra.lotr.domain.model.book.Book
+import ch.kra.lotr.data.local.entity.book.BookEntity
 
 data class BookDto(
     val _id: String,
     val name: String
 ) {
-    fun toBook(): Book {
-        return Book(
+    fun toBookEntity(): BookEntity {
+        return BookEntity(
             id = _id,
             title = name
         )

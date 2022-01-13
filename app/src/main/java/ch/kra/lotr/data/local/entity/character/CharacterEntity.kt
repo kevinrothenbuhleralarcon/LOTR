@@ -1,10 +1,13 @@
-package ch.kra.lotr.data.remote.dto.character
+package ch.kra.lotr.data.local.entity.character
 
-import ch.kra.lotr.data.local.entity.character.CharacterEntity
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import ch.kra.lotr.domain.model.character.LotrCharacter
 
-
-data class CharacterDto(
-    val _id: String,
+@Entity
+data class CharacterEntity(
+    @PrimaryKey val id: String,
     val birth: String?,
     val death: String?,
     val gender: String?,
@@ -14,11 +17,11 @@ data class CharacterDto(
     val race: String?,
     val realm: String?,
     val spouse: String?,
-    val wikiUrl: String?
+    @ColumnInfo(name = "wiki_url") val wikiUrl: String?
 ) {
-    fun toCharacterEntity(): CharacterEntity {
-        return CharacterEntity(
-            id = _id,
+    fun toLotrCharacter(): LotrCharacter {
+        return LotrCharacter(
+            id = id,
             birth = birth,
             death = death,
             gender = gender,

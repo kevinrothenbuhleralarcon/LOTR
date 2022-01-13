@@ -1,5 +1,6 @@
 package ch.kra.lotr.di
 
+import ch.kra.lotr.data.local.LotrDatabase
 import ch.kra.lotr.data.remote.dto.LotrApi
 import ch.kra.lotr.data.repository.character.CharacterRepositoryImpl
 import ch.kra.lotr.domain.repository.character.CharacterRepository
@@ -24,8 +25,9 @@ object CharacterModule {
 
     @Provides
     @Singleton
-    fun provideCharacterRepository(api: LotrApi): CharacterRepository {
+    fun provideCharacterRepository(db: LotrDatabase, api: LotrApi): CharacterRepository {
         return CharacterRepositoryImpl(
+            db.lotrDao,
             api
         )
     }
