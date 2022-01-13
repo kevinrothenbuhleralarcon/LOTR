@@ -1,20 +1,14 @@
 package ch.kra.lotr.presentation.character.composable
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +23,8 @@ import androidx.compose.ui.unit.sp
 import ch.kra.lotr.R
 import ch.kra.lotr.core.UIEvent
 import ch.kra.lotr.domain.model.character.LotrCharacter
+import ch.kra.lotr.presentation.LoadingWrapper
+import ch.kra.lotr.presentation.NavigateBackHeader
 import ch.kra.lotr.presentation.character.CharacterDetailEvent
 import ch.kra.lotr.presentation.character.viewModel.CharacterViewModel
 import kotlinx.coroutines.flow.collect
@@ -60,10 +56,9 @@ fun CharacterDetailScreen(
             .fillMaxSize()
             .background(MaterialTheme.colors.primary)
     ) {
-        CharacterListHeader(
-            characterName = character?.name ?: "",
-            onEvent = viewModel::onEvent
-        )
+        NavigateBackHeader(title = character?.name ?: "") {
+            viewModel.onEvent(CharacterDetailEvent.OnNavigateBack)
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -72,57 +67,15 @@ fun CharacterDetailScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .shadow(1.dp, RoundedCornerShape(10.dp))
-                    .padding(
-                        end = 8.dp,
-                        bottom = 8.dp
-                    )
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(MaterialTheme.colors.secondary)
-                    .padding(16.dp)
-            ) {
-                character?.let {
+            LoadingWrapper(isLoading = false) {
+                character?.let { character ->
                     CharacterDetail(
-                        character = it,
+                        character = character,
                         onEvent = viewModel::onEvent
                     )
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun CharacterListHeader(
-    characterName: String,
-    modifier: Modifier = Modifier,
-    onEvent: (CharacterDetailEvent) -> Unit
-) {
-    Row(
-        modifier = modifier,
-    ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = null,
-            tint = MaterialTheme.colors.onPrimary,
-            modifier = Modifier
-                .size(30.dp)
-                .offset(16.dp, 16.dp)
-                .clickable { onEvent(CharacterDetailEvent.OnNavigateBack) }
-        )
-
-        Spacer(modifier = Modifier.width(32.dp))
-
-        Text(
-            text = characterName,
-            fontSize = 24.sp,
-            color = MaterialTheme.colors.onPrimary,
-            modifier = Modifier
-                .offset((0).dp, 16.dp)
-        )
     }
 }
 
@@ -136,31 +89,11 @@ private fun CharacterDetail (
     } else {
         ImageVector.vectorResource(id = R.drawable.ic_male)
     }
-
-    val annotatedLinkString: AnnotatedString = buildAnnotatedString {
-        val str = stringResource(R.string.wiki)
-        val startIndex = 0
-        val endIndex = str.length
-        append(str)
-        addStyle(
-            style = SpanStyle(
-                color = Color(0xff64B5F6),
-                fontSize = 18.sp,
-                textDecoration = TextDecoration.Underline
-            ), start = startIndex, end = endIndex
-        )
-        addStringAnnotation(
-            tag = "URL",
-            annotation = character.wikiUrl,
-            start = startIndex,
-            end = endIndex
-        )
-    }
     
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = character.race,
+                text = character.race ?: stringResource(R.string.unknown),
                 color = MaterialTheme.colors.onSecondary
             )
             
@@ -177,7 +110,7 @@ private fun CharacterDetail (
 
         Text(
             text = stringResource(R.string.born) +
-                    character.birth,
+                    (character.birth ?: stringResource(R.string.unknown)),
             color = MaterialTheme.colors.onSecondary
         )
 
@@ -185,17 +118,22 @@ private fun CharacterDetail (
 
         Text(
             text = stringResource(R.string.death) +
-                    character.death,
+                    (character.death ?: stringResource(R.string.unknown)),
             color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        val heightStringBuilder = StringBuilder()
+        heightStringBuilder.append(stringResource(R.string.height))
+        character.height?.let { height ->
+            heightStringBuilder.append(height)
+            heightStringBuilder.append(" ")
+            heightStringBuilder.append(stringResource(R.string.cm))
+        } ?: heightStringBuilder.append(stringResource(id = R.string.unknown))
+
         Text(
-            text = stringResource(R.string.height) +
-                    character.height +
-                    " " +
-                    stringResource(R.string.cm),
+            text = heightStringBuilder.toString(),
             color = MaterialTheme.colors.onSecondary
         )
 
@@ -203,7 +141,7 @@ private fun CharacterDetail (
 
         Text(
             text = stringResource(R.string.hair) +
-                    character.hair,
+                    (character.hair ?: stringResource(id = R.string.unknown)),
             color = MaterialTheme.colors.onSecondary
         )
 
@@ -212,7 +150,7 @@ private fun CharacterDetail (
 
         Text(
             text = stringResource(R.string.spouse) +
-                    character.spouse,
+                    (character.spouse ?: stringResource(id = R.string.unknown)),
             color = MaterialTheme.colors.onSecondary
         )
 
@@ -220,21 +158,43 @@ private fun CharacterDetail (
 
         Text(
             text = stringResource(R.string.realm) +
-                    character.realm,
+                    (character.realm ?: stringResource(id = R.string.unknown)),
             color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        ClickableText(
-            text = annotatedLinkString,
-            onClick = {
-                annotatedLinkString
-                    .getStringAnnotations("URL", it, it)
-                    .firstOrNull()?.let { stringAnnotation ->
-                        onEvent(CharacterDetailEvent.OnNavigateToWiki(stringAnnotation.item))
-                    }
+        character.wikiUrl?.let { url ->
+            val annotatedLinkString: AnnotatedString = buildAnnotatedString {
+                val str = stringResource(R.string.wiki)
+                val startIndex = 0
+                val endIndex = str.length
+                append(str)
+                addStyle(
+                    style = SpanStyle(
+                        color = Color(0xff64B5F6),
+                        fontSize = 18.sp,
+                        textDecoration = TextDecoration.Underline
+                    ), start = startIndex, end = endIndex
+                )
+                addStringAnnotation(
+                    tag = "URL",
+                    annotation = url,
+                    start = startIndex,
+                    end = endIndex
+                )
             }
-        )
+
+            ClickableText(
+                text = annotatedLinkString,
+                onClick = {
+                    annotatedLinkString
+                        .getStringAnnotations("URL", it, it)
+                        .firstOrNull()?.let { stringAnnotation ->
+                            onEvent(CharacterDetailEvent.OnNavigateToWiki(stringAnnotation.item))
+                        }
+                }
+            )
+        }
     }
 }

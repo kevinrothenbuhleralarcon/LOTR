@@ -1,26 +1,20 @@
 package ch.kra.lotr.presentation.book.composable
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.lotr.R
-import ch.kra.lotr.core.ListState
 import ch.kra.lotr.core.UIEvent
 import ch.kra.lotr.domain.model.book.Chapter
+import ch.kra.lotr.presentation.LoadingWrapper
+import ch.kra.lotr.presentation.NavigateBackHeader
 import ch.kra.lotr.presentation.book.ChapterListEvent
 import ch.kra.lotr.presentation.book.viewmodel.ChapterViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -60,11 +54,9 @@ fun ChapterListScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colors.primary)
         ) {
-            ChapterListHeader(
-                bookName = bookName,
-                modifier = Modifier.fillMaxWidth(),
-                onEvent = viewModel::onEvent
-            )
+            NavigateBackHeader(title = bookName) {
+                viewModel.onEvent(ChapterListEvent.OnNavigateBackPressed)
+            }
             
             Spacer(modifier = Modifier.height(16.dp))
             
@@ -73,71 +65,10 @@ fun ChapterListScreen(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                ChapterListWrapper(
-                    chapterListState = chapterListState
-                )
+                LoadingWrapper(isLoading = chapterListState.isLoading) {
+                    ChapterList(chapterList = chapterListState.list)
+                }
             }
-        }
-    }
-}
-
-@Composable
-private fun ChapterListHeader(
-    bookName: String,
-    modifier: Modifier = Modifier,
-    onEvent: (ChapterListEvent) -> Unit
-) {
-    Row(
-        modifier = modifier,
-    ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = null,
-            tint = MaterialTheme.colors.onPrimary,
-            modifier = Modifier
-                .size(30.dp)
-                .offset(16.dp, 16.dp)
-                .clickable { onEvent(ChapterListEvent.OnNavigateBackPressed) }
-        )
-        
-        Spacer(modifier = Modifier.width(32.dp))
-        
-        Text(
-            text = bookName,
-            fontSize = 24.sp,
-            color = MaterialTheme.colors.onPrimary,
-            modifier = Modifier
-                .offset((0).dp, 16.dp)
-        )
-    }
-}
-
-@Composable
-private fun ChapterListWrapper(
-    chapterListState: ListState<Chapter>
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .shadow(1.dp, RoundedCornerShape(10.dp))
-            .padding(
-                end = 8.dp,
-                bottom = 8.dp
-            )
-            .clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colors.secondary)
-            .padding(16.dp)
-    ) {
-        if (chapterListState.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(100.dp)
-                    .align(Alignment.Center)
-            )
-        } else {
-            ChapterList(
-                chapterList = chapterListState.list
-            )
         }
     }
 }

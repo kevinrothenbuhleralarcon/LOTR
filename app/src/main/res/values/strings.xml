@@ -17,4 +17,9 @@
     <string name="wiki">Wiki</string>
     <string name="tolkien_movies">Tolkien\'s universe movies</string>
     <string name="tolkien_characters">Tolkien\'s universe characters</string>
+    <string name="lotr_books">Lord of the rings books</string>
+    <string name="books">Books</string>
+    <string name="movies">Movies</string>
+    <string name="characters">Characters</string>
+    <string name="unknown">Unknown</string>
 </resources>

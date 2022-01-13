@@ -20,16 +20,16 @@ data class CharacterDto(
     fun mapToCharacter(): LotrCharacter {
         return LotrCharacter(
             id = _id,
-            birth = birth ?: "",
-            death = death ?: "",
-            gender = gender ?: "",
-            hair = hair ?: "",
-            height = height ?: "",
+            birth = birth,
+            death = death,
+            gender = gender,
+            hair = hair,
+            height = height,
             name = name,
-            race = race ?: "",
-            realm = realm ?: "",
-            spouse = spouse ?: "",
-            wikiUrl = wikiUrl ?: ""
+            race = race,
+            realm = realm,
+            spouse = spouse,
+            wikiUrl = wikiUrl
         )
     }
 }

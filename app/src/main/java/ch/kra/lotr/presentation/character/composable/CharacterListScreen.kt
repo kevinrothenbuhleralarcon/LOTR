@@ -21,6 +21,7 @@ import ch.kra.lotr.R
 import ch.kra.lotr.core.ListState
 import ch.kra.lotr.core.UIEvent
 import ch.kra.lotr.domain.model.character.LotrCharacter
+import ch.kra.lotr.presentation.LogoHeader
 import ch.kra.lotr.presentation.character.CharacterListEvent
 import ch.kra.lotr.presentation.character.viewModel.CharacterViewModel
 import kotlinx.coroutines.flow.collect
@@ -59,7 +60,7 @@ fun CharacterListScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colors.primary)
         ) {
-            CharacterListHeader(
+            LogoHeader(
                 modifier = Modifier
                     .padding(
                         top = 16.dp,
@@ -83,19 +84,6 @@ fun CharacterListScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun CharacterListHeader(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.lotr_header),
-            contentDescription = null
-        )
     }
 }
 

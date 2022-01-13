@@ -31,17 +31,17 @@ class MainActivity : ComponentActivity() {
                         NavDrawer(
                             items = listOf(
                                 NavigationBarItem(
-                                    name = "Books",
+                                    name = getString(R.string.books),
                                     route = Routes.BOOK_LIST,
                                     painter = painterResource(id = R.drawable.ic_book_ic)
                                 ),
                                 NavigationBarItem(
-                                    name = "Movies",
+                                    name = getString(R.string.movies),
                                     route = Routes.MOVIE_LIST,
                                     painter = painterResource(id = R.drawable.ic_movie)
                                 ),
                                 NavigationBarItem(
-                                    name = "Characters",
+                                    name = getString(R.string.characters),
                                     route = Routes.CHARACTER_LIST,
                                     painter = rememberVectorPainter(image = Icons.Default.Person)
                                 )

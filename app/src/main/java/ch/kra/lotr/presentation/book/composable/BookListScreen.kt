@@ -1,27 +1,23 @@
 package ch.kra.lotr.presentation.book.composable
 
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ch.kra.lotr.R
-import ch.kra.lotr.core.ListState
 import ch.kra.lotr.core.UIEvent
 import ch.kra.lotr.domain.model.book.Book
+import ch.kra.lotr.presentation.LoadingWrapper
+import ch.kra.lotr.presentation.LogoHeader
 import ch.kra.lotr.presentation.book.BookListEvent
 import ch.kra.lotr.presentation.book.viewmodel.BookViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -60,7 +56,7 @@ fun BookListScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colors.primary)
         ) {
-            BookListHeader(
+            LogoHeader(
                 modifier = Modifier
                     .padding(
                         top = 16.dp,
@@ -74,12 +70,12 @@ fun BookListScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                BookListWrapper(
-                    bookListState = bookListState,
-                    modifier = Modifier
-                        .weight(0.8f),
-                    onEvent = viewModel::onEvent
-                )
+               LoadingWrapper(isLoading = bookListState.isLoading) {
+                   BookList(
+                       bookList = bookListState.list,
+                       onEvent = viewModel::onEvent
+                   )
+               }
             }
         }
 
@@ -87,59 +83,13 @@ fun BookListScreen(
 }
 
 @Composable
-private fun BookListHeader(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.lotr_header),
-            contentDescription = null
-        )
-    }
-}
-
-@Composable
-private fun BookListWrapper(
-    bookListState: ListState<Book>,
-    modifier: Modifier = Modifier,
-    onEvent: (BookListEvent) -> Unit
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .clip(RoundedCornerShape(10.dp))
-            .shadow(1.dp, RoundedCornerShape(10.dp))
-            .padding(
-                bottom = 8.dp,
-                end = 8.dp
-            )
-            .clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colors.secondary)
-            .padding(16.dp)
-    ) {
-        if (bookListState.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .align(Center)
-            )
-        } else {
-            BookList(
-                bookListState = bookListState,
-                onEvent = onEvent
-            )
-        }
-    }
-}
-
-@Composable
 private fun BookList(
-    bookListState: ListState<Book>,
+    bookList: List<Book>,
     onEvent: (BookListEvent) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = "Lord of the rings books",
+            text = stringResource(R.string.lotr_books),
             fontSize = 24.sp,
             color = MaterialTheme.colors.onSecondary,
             modifier = Modifier.fillMaxWidth()
@@ -157,18 +107,18 @@ private fun BookList(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            items(bookListState.list.size) { i ->
+            items(bookList.size) { i ->
                 if (i > 0) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
                 Text(
-                    text = bookListState.list[i].title,
+                    text = bookList[i].title,
                     color = MaterialTheme.colors.onSecondary,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            onEvent(BookListEvent.DisplayChapter(bookListState.list[i]))
+                            onEvent(BookListEvent.DisplayChapter(bookList[i]))
                         }
                 )
             }
