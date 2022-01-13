@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -14,10 +15,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.kra.lotr.R
@@ -130,28 +136,57 @@ private fun CharacterDetail (
     } else {
         ImageVector.vectorResource(id = R.drawable.ic_male)
     }
+
+    val annotatedLinkString: AnnotatedString = buildAnnotatedString {
+        val str = stringResource(R.string.wiki)
+        val startIndex = 0
+        val endIndex = str.length
+        append(str)
+        addStyle(
+            style = SpanStyle(
+                color = Color(0xff64B5F6),
+                fontSize = 18.sp,
+                textDecoration = TextDecoration.Underline
+            ), start = startIndex, end = endIndex
+        )
+        addStringAnnotation(
+            tag = "URL",
+            annotation = character.wikiUrl,
+            start = startIndex,
+            end = endIndex
+        )
+    }
     
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier.fillMaxWidth()) {
-            Text(text = character.race)
+            Text(
+                text = character.race,
+                color = MaterialTheme.colors.onSecondary
+            )
             
             Spacer(modifier = Modifier.width(8.dp))
             
-            Icon(imageVector = icon, contentDescription = character.gender)
+            Icon(
+                imageVector = icon,
+                contentDescription = character.gender,
+                tint = MaterialTheme.colors.onSecondary
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = stringResource(R.string.born) +
-                    character.birth
+                    character.birth,
+            color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = stringResource(R.string.death) +
-                    character.death
+                    character.death,
+            color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -160,14 +195,16 @@ private fun CharacterDetail (
             text = stringResource(R.string.height) +
                     character.height +
                     " " +
-                    stringResource(R.string.cm)
+                    stringResource(R.string.cm),
+            color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = stringResource(R.string.hair) +
-                    character.hair
+                    character.hair,
+            color = MaterialTheme.colors.onSecondary
         )
 
 
@@ -175,24 +212,29 @@ private fun CharacterDetail (
 
         Text(
             text = stringResource(R.string.spouse) +
-                    character.spouse
+                    character.spouse,
+            color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = stringResource(R.string.realm) +
-                    character.realm
+                    character.realm,
+            color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = stringResource(R.string.wiki),
-            modifier = Modifier
-                .clickable {
-                    onEvent(CharacterDetailEvent.OnNavigateToWiki(character.wikiUrl))
-                }
+        ClickableText(
+            text = annotatedLinkString,
+            onClick = {
+                annotatedLinkString
+                    .getStringAnnotations("URL", it, it)
+                    .firstOrNull()?.let { stringAnnotation ->
+                        onEvent(CharacterDetailEvent.OnNavigateToWiki(stringAnnotation.item))
+                    }
+            }
         )
     }
 }

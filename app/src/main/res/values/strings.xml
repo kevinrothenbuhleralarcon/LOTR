@@ -15,4 +15,6 @@
     <string name="realm">"Realm: "</string>
     <string name="hair">"Hair: "</string>
     <string name="wiki">Wiki</string>
+    <string name="tolkien_movies">Tolkien\'s universe movies</string>
+    <string name="tolkien_characters">Tolkien\'s universe characters</string>
 </resources>

@@ -1,5 +1,6 @@
 package ch.kra.lotr.presentation.ui.theme
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -17,7 +18,7 @@ val Typography = Typography(
     body1 = TextStyle(
         fontFamily = ringbearer,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontSize = 16.sp,
     )
     /* Other default text styles to override
     button = TextStyle(

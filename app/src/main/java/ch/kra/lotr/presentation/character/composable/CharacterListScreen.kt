@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.kra.lotr.R
@@ -58,7 +59,14 @@ fun CharacterListScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colors.primary)
         ) {
-            CharacterListHeader()
+            CharacterListHeader(
+                modifier = Modifier
+                    .padding(
+                        top = 16.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    )
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -131,7 +139,7 @@ private fun CharacterList(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = "Tolkien's universe movies",
+            text = stringResource(R.string.tolkien_characters),
             fontSize = 24.sp,
             color = MaterialTheme.colors.onSecondary,
             modifier = Modifier.fillMaxWidth()

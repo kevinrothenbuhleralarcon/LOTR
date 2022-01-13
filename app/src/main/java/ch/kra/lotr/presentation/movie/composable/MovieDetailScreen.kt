@@ -122,7 +122,10 @@ fun MovieDetail(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Text(text = stringResource(R.string.runtime) + movie.runtimeInMinutes + " min")
+        Text(
+            text = stringResource(R.string.runtime) + movie.runtimeInMinutes + " min",
+            color = MaterialTheme.colors.onSecondary
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -131,7 +134,8 @@ fun MovieDetail(
             stringResource(R.string.budget) +
                     movie.budgetInMillions
                     + " " +
-                    stringResource(R.string.millions)
+                    stringResource(R.string.millions),
+            color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -141,7 +145,8 @@ fun MovieDetail(
             stringResource(R.string.revenue) +
                     movie.boxOfficeRevenueInMillions
                     + " " +
-                    stringResource(R.string.millions)
+                    stringResource(R.string.millions),
+            color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -149,7 +154,8 @@ fun MovieDetail(
         Text(
             text =
             stringResource(R.string.award_nomination) +
-                    movie.academyAwardNominations
+                    movie.academyAwardNominations,
+            color = MaterialTheme.colors.onSecondary
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -157,7 +163,8 @@ fun MovieDetail(
         Text(
             text =
             stringResource(R.string.award_won) +
-                    movie.academyAwardWins
+                    movie.academyAwardWins,
+            color = MaterialTheme.colors.onSecondary
         )
     }
 }

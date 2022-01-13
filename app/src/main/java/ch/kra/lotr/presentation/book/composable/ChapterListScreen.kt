@@ -151,7 +151,8 @@ fun ChapterList(
     ) {
         Text(
             text = stringResource(R.string.chapters),
-            fontSize = 20.sp
+            fontSize = 20.sp,
+            color = MaterialTheme.colors.onSecondary
         )
         Divider(
             color = MaterialTheme.colors.onSecondary,
@@ -167,7 +168,10 @@ fun ChapterList(
                 if (i > 0) {
                     Spacer(modifier = Modifier.height(16.dp))
                 }
-                Text(text = "${i + 1}. ${chapterList[i].chapterName}")
+                Text(
+                    text = "${i + 1}. ${chapterList[i].chapterName}",
+                    color = MaterialTheme.colors.onSecondary
+                )
             }
         }
     }

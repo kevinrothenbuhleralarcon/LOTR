@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.kra.lotr.R
@@ -137,7 +138,7 @@ private fun MovieList(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = "Tolkien's universe movies",
+            text = stringResource(R.string.tolkien_movies),
             fontSize = 24.sp,
             color = MaterialTheme.colors.onSecondary,
             modifier = Modifier.fillMaxWidth()
