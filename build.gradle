@@ -5,7 +5,7 @@ buildscript {
         retrofit_version = "2.9.0"
         okhttp_version = "4.9.3"
         dagger_version = "2.40.5"
-        room_version = "2.4.0"
+        room_version = "2.4.1"
         nav_version = "2.4.0-rc01"
     }
     repositories {
